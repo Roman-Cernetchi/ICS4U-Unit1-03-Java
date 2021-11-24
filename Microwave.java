@@ -1,117 +1,189 @@
-/**
- * This program calculates the time needed to heat certain foods.
+/*
+ * This program calculates how much time it would take to cook a sub, soup or
+ * pizza in quantities of 1-3
  *
  * @author  Roman Cernetchi
  * @version 1.0
- * @since 2021-11-23
+ * @since   2021-11-23
  */
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-    public final class MicrowaveFood {
-    private MicrowaveFood() {
+/**
+* This class calculates the cooking time of a subset of food items.
+*/
+final class Microwave {
 
-        // Throw an exception if this ever *is* called
-        throw new AssertionError("Instantiating utility class.");
-    }
+    // Public Constant Declarations
     /**
-    * This method calculates the time needed to heat food.
-    * @param args
+     * This constant represents the time it would take to heat up a sub inside
+     * of the microwave in seconds.
+     */
+    public static final int SUB_HEATING_TIME = 60;
+
+    /**
+     * This constant represents the time it would take to heat up a soup inside
+     * of the microwave in seconds.
+     */
+
+    public static final int SOUP_HEATING_TIME = 105;
+
+    /**
+     * This constant represents the time it would take to heat up a pizza inside
+     * of the microwave in seconds.
+     */
+    public static final int PIZZA_HEATING_TIME = 45;
+
+    /**
+     * This constant represents the time multiplier needed to heat up 2 items
+     * (50% added time).
+     */
+    public static final double TWO_ITEM_MULTIPLIER = 1.5;
+
+    /**
+     * This constant represents the time multiplier needed to heat up 3 items
+     * (100% added time).
+     * */
+    public static final int THREE_ITEM_MULTIPLIER = 2;
+
+    /**
+     * This constant represents the amount of seconds in a minute (60 seconds
+     * in a minute).
+     * */
+    public static final int SECS_IN_MIN = 60;
+
+    /**
+     * This constant represents one item if the user inputs 1 in quantityInput.
+     * */
+    public static final int ONE_ITEM = 1;
+
+    /**
+     * This constant represents two items if the user inputs 2 in
+     * quantityInput.
+     * */
+    public static final int TWO_ITEMS = 2;
+
+    /**
+     * This constant represents three items if the user inputs 3 in
+     * quantityInput.
+     * */
+    public static final int THREE_ITEMS = 3;
+
+    /**
+    * Prevents instantiation.
+    * Throw an exception IllegalStateException when called.
+    *
+    * @throws IllegalStateException
+    *
     */
-    public static void main(final String[] args) {
+    private Microwave() {
+        throw new IllegalStateException("Cannot be instantiated");
+    }
 
-        // Create new Scanner-type variable
-        Scanner foodInput = new Scanner(System.in);
-        Scanner numInput = new Scanner(System.in);
+    /**
+     * Calculates and outputs the energy generated from a certain amount of
+     * mass.
+     *
+     * @param args No args will be used.
+     * @throws IOException if there is anything wrong with the input
+     * @throws NumberFormatException if quantityInput isn't a number
+     * @throws FoodItemNotFoundException if the foodItemInput isn't "sub",
+     *     "soup" or "pizza"
+     * @throws IncorrectQuantityException if the quantityInput isn't between
+     *     1-3
+     * */
+    public static void main(final String[] args)
+            throws NumberFormatException, IOException {
 
-        // Constants
-        final float zeroPercentIncrease = 1f;
-        final float fiftyPercentIncrease = 1.5f;
-        final float hundredPercentIncrease = 2f;
-        final float subTime = 1f;
-        final float pizzaTime = 0.75f;
-        final float soupTime = 1.75f;
-        final float sixtySeconds = 60f;
-        // style checker wanted these as constants
-        final int one = 1;
-        final int two = 2;
-        final int three = 3;
+        // Variable Declarations
+        final String foodItemInput;
+        final String foodItemInputLowercase;
+        final String quantityInputString;
+        final int quantityInput;
 
-        // Variables
-        float cookTime = 0f;
-        float cookSeconds = 0f;
-        int numOfItems = 0;
+        double totalSecondsToCook = 0;
+        final double minutesToCook;
+        final double secondsToCook;
 
         try {
-            // Asks user to enter one of several choices
-            System.out.print("Are you heating a sub, pizza or soup: ");
+            // User prompt
+            System.out.print("What is being heated, sub, pizza, or soup?: ");
 
-            // Gathering the user input
-            final BufferedReader inputReader = new BufferedReader(
+            // Gathers and parses input to a String
+            foodItemInput = new BufferedReader(
                     new InputStreamReader(System.in)
-            );
+            ).readLine();
 
-            if (foodItem.equals("sub")) {
-                // Assigning cooktime for sub
-                cookTime = subTime;
-            } else if (foodItem.equals("pizza")) {
-                // Assigning cooktime for pizza
-                cookTime = pizzaTime;
-            } else if (foodItem.equals("soup")) {
-                // Assigning cooktime for soup
-                cookTime = soupTime;
-            } else 
-        } catch (NumberFormatException | IOException exception) {
-	        // error catch
-                System.out.println("That's not an option! Try again.");
-                System.out.print("Are you heating a sub, pizza or soup: ");
-                continue;
+            // Lowercase version of foodItemInput in case of typos
+            foodItemInputLowercase = foodItemInput.toLowerCase();
+
+            // Checks what the user inputted and decides the amount of time
+            // that will be needed for one item
+            switch (foodItemInputLowercase) {
+                case "soup":
+                    totalSecondsToCook = SOUP_HEATING_TIME;
+                    break;
+                case "sub":
+                    totalSecondsToCook = SUB_HEATING_TIME;
+                    break;
+                case "pizza":
+                    totalSecondsToCook = PIZZA_HEATING_TIME;
+                    break;
+                default:
+                    throw new FoodItemNotFoundException();
             }
 
-            // number of items input
-            try {
+            // User prompt
+            System.out.print("How much would you like to heat up?(max:3): ");
 
-                System.out.print("How much " + foodItem
-                                + "(s) are you going to heat(max:3): ");
+            // Gathers and parses input to a String
+            quantityInputString = new BufferedReader(
+                new InputStreamReader(System.in)
+            ).readLine();
 
-                // check if input is an integer
-                while (!numInput.hasNextInt()) {
-                    System.out.println("That's not a valid number!");
-                    System.out.print("Enter how many " + foodItem
-                                    + "(s) you are heating (max. 3): ");
-                    numInput.next(); // moves scanner until correct value
-                }
-                numOfItems = numInput.nextInt();
+            // Parses String version of the input as an Int
+            quantityInput = Integer.parseInt(quantityInputString);
 
-                // process
-                if (numOfItems == one) {
-                    // assigning cooktime for 1 item
-                    cookTime = cookTime * zeroPercentIncrease;
-                } else if (numOfItems == two) {
-                    // assigning cooktime for 2 items
-                    cookTime = cookTime * fiftyPercentIncrease;
-                } else if (numOfItems == three) {
-                    // assigning cooktime for 3 items
-                    cookTime = cookTime * hundredPercentIncrease;
-                } else 
-                    System.out.println("That's not an option! Try again.");
-                    continue;
-            } catch (NumberFormatException | IOException exception) {
-                System.out.println("That wasn't a number.");
+            // Checks what the user inputted and decided the time multiplier
+            // for the cooking time based on their input (1-3)
+            switch (quantityInput) {
+                case ONE_ITEM:
+                    break;
+                case TWO_ITEMS:
+                    totalSecondsToCook =
+                        totalSecondsToCook * TWO_ITEM_MULTIPLIER;
+                    break;
+                case THREE_ITEMS:
+                    totalSecondsToCook =
+                        totalSecondsToCook * THREE_ITEM_MULTIPLIER;
+                    break;
+                default:
+                    throw new IncorrectQuantityException();
             }
-                // calculate how many seconds
-                cookSeconds = cookTime * sixtySeconds;
-                break;
 
-            // output
-            System.out.println("");
-            System.out.println("The total cook time to is " + cookTime
-                                + " minutes (" + cookSeconds + " seconds).");
-            System.out.println("");
-            System.out.println("Done.");
-            break;
+            // Calculates the amount of time in minutes and seconds needed to
+            // cook the food items
+            minutesToCook = Math.floor(totalSecondsToCook / SECS_IN_MIN);
+            secondsToCook = totalSecondsToCook % SECS_IN_MIN;
+
+            // Outputs the calculations in a human-readable form
+            System.out.println("The total time to cook is "
+                    + String.format("%.0f", minutesToCook) + " minutes and "
+                    + String.format("%.01f", secondsToCook)
+                    + ".");
+        } catch (FoodItemNotFoundException
+                | IncorrectQuantityException exception) {
+            // Prints the exception messages
+            System.err.print(exception);
+        } catch (IOException | NumberFormatException exception) {
+            // Ouputs error message
+            System.out.println("Not a correct input.");
         }
+
+        System.out.println("\nDone.");
+
     }
+
 }
